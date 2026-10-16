@@ -8,8 +8,10 @@ services:
       - .:/app_code        # hot-reload коду
       - db_data:/app_code/data   # персистентна БД SQLite
     environment:
-      # Секрет береться з файлу .env (не в Git!); після ":-" — значення лише для розробки
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev-only-secret-change-me}
+      # Значення беруться з .env (не в Git!); без них compose зупиняється з помилкою
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:?JWT_SECRET_KEY не задано в .env}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:?ENCRYPTION_KEY не задано в .env}
+      - BLIND_INDEX_KEY=${BLIND_INDEX_KEY:?BLIND_INDEX_KEY не задано в .env}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:8000}
     restart: unless-stopped
 
