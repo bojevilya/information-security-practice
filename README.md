@@ -3,7 +3,9 @@
 Практична робота №1 з дисципліни «Безпека інформаційних систем»
 
 **Студент:** Недождій Ігор
+
 **Група:** Б2F5013ОН24
+
 **Курс:** 3 курс, Кібербезпека
 
 ## Опис
@@ -26,7 +28,7 @@
 
 ## Структура проєкту
 
-`
+```
 information-security-practice/
 ├── app/
 │   ├── __init__.py
@@ -66,39 +68,39 @@ information-security-practice/
 ├── docker-compose.yml
 ├── .env.example
 └── .gitignore
-`
+```
 
 ## Запуск проєкту
 
 ### Клонування репозиторію
-`ash
+```bash
 git clone https://github.com/YOUR_USERNAME/information-security-practice.git
 cd information-security-practice
-`
+```
 
 ### Налаштування змінних оточення
 Створіть файл .env на основі .env.example:
-`ash
+```bash
 cp .env.example .env
-`
+```
 
 Згенеруйте випадковий секретний ключ (64 hex-символи) та замініть у .env:
-`ash
+```bash
 openssl rand -hex 32
-`
+```
 
 ### Запуск з Docker Compose
 
-`ash
+```bash
 docker compose up -d --build
-`
+```
 
 ### Застосування міграцій та наповнення БД
 
-`ash
+```bash
 docker compose exec api alembic upgrade head
 docker compose exec api python -m app.seed
-`
+```
 
 API буде доступне за адресою: **http://localhost:8000**  
 Swagger UI: **http://localhost:8000/docs**  
@@ -134,14 +136,11 @@ efresh token) |
 
 | Дозвіл | admin | teacher | student |
 |---|---|---|---|
-| 
-ead_grades | ✓ | ✓ | ✓ |
+| ead_grades | ✓ | ✓ | ✓ |
 | edit_grades | ✓ | ✓ | — |
-| 
-ead_schedule | ✓ | ✓ | ✓ |
+| ead_schedule | ✓ | ✓ | ✓ |
 | manage_users, manage_groups, manage_subjects | ✓ | — | — |
-| 
-iew_reports | ✓ | ✓ | — |
+| iew_reports | ✓ | ✓ | — |
 
 ## Фінальна перевірка (розділ 10)
 
@@ -202,13 +201,13 @@ _05. Заголовки безпеки у відповіді /health (CSP, X-Fra
 
 ## Коміти по етапах
 
-`ash
+```bash
 6c15c64 stage1: FastAPI + Docker Compose environment
 36aa49d stage2: models, RBAC, alembic migration, seed
 e9c4acf stage3: register/login with bcrypt and validation
 44a34ad stage4: JWT access/refresh, protected routes, RBAC
 9c297cd stage5: security headers, CORS, rate limiting, XSS sanitization
-`
+```
 
 ## Перевірка запуску з чистого клону
 
