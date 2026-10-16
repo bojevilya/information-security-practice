@@ -2,9 +2,9 @@
 
 Практична робота №1 з дисципліни «Безпека інформаційних систем»
 
-**Студент:** ojevilya  
-**Група:** КН-31  
-**Курс:** 3 курс, Комп'ютерні науки
+**Студент:** Недождій Ігор
+**Група:** Б2F5013ОН24
+**Курс:** 3 курс, Кібербезпека
 
 ## Опис
 
@@ -106,11 +106,11 @@ ReDoc: **http://localhost:8000/redoc**
 
 ## Тестові облікові записи
 
-Паролі вказані у pp/seed.py (не зберігаються у відкритому вигляді в БД).
+Паролі вказані у  pp/seed.py (не зберігаються у відкритому вигляді в БД).
 
 | Логін | Пароль | Роль |
 |---|---|---|
-| dmin | Admin123!@# | admin |
+|  dmin | Admin123!@# | admin |
 | 	eacher01 | Teacher123! | teacher |
 | student01 | Student123! | student |
 
@@ -122,22 +122,26 @@ ReDoc: **http://localhost:8000/redoc**
 | /health | GET | **Public** | Перевірка стану API (таблиці БД) |
 | /auth/register | POST | **Public** | Реєстрація (автопризначення ролі student) |
 | /auth/login | POST | **Public** | Вхід → повертає access + refresh токени |
-| /auth/refresh | POST | **Public** | Оновлення токенів (потрібен efresh token) |
+| /auth/refresh | POST | **Public** | Оновлення токенів (потрібен 
+efresh token) |
 | /auth/me | GET | **Аутентифікований** (Bearer access) | Інформація про поточного користувача |
 | /students/me/grades | GET | **student** | Перегляд лише власних оцінок |
 | /teachers/students/{student_id}/grades | GET | **teacher, admin** | Перегляд оцінок студента |
-| /teachers/grades | POST | **teacher, admin** | Додавання оцінки (з фіксацією ssigned_by) |
+| /teachers/grades | POST | **teacher, admin** | Додавання оцінки (з фіксацією  ssigned_by) |
 | /admin/users | GET | **admin** | Список всіх користувачів |
 
 ## Матриця RBAC
 
 | Дозвіл | admin | teacher | student |
 |---|---|---|---|
-| ead_grades | ✓ | ✓ | ✓ |
+| 
+ead_grades | ✓ | ✓ | ✓ |
 | edit_grades | ✓ | ✓ | — |
-| ead_schedule | ✓ | ✓ | ✓ |
+| 
+ead_schedule | ✓ | ✓ | ✓ |
 | manage_users, manage_groups, manage_subjects | ✓ | — | — |
-| iew_reports | ✓ | ✓ | — |
+| 
+iew_reports | ✓ | ✓ | — |
 
 ## Фінальна перевірка (розділ 10)
 
@@ -148,10 +152,11 @@ ReDoc: **http://localhost:8000/redoc**
 | 3 | Дублікат username | POST /auth/register (той самий username) | 409 | 409 {"detail":"Username вже зайнятий"} |
 | 4 | Слабкий пароль | POST /auth/register (password:"password") | 422 | 422 (валідація великої літери/цифри/малої літери) |
 | 5 | XSS в імені | POST /auth/register (ull_name зі <script>) | 422 | 422 (allow-list, лише літери/пробіл/апостроф/дефіс) |
-| 6 | Логін (успіх) | POST /auth/login (admin/Admin123!@#) | 200, ccess_token + efresh_token | 200, пара токенів JWT (HS256) |
+| 6 | Логін (успіх) | POST /auth/login (admin/Admin123!@#) | 200,  ccess_token + 
+efresh_token | 200, пара токенів JWT (HS256) |
 | 7 | Невірний пароль | POST /auth/login (admin/wrong) | 401 «Невірний логін або пароль» | 401 з однаковим повідомленням (захист від Username Enumeration) |
 | 8 | Без токена | GET /auth/me | 401 | 401 {"detail":"Потрібна автентифікація"} |
-| 9 | Підроблений токен | GET /auth/me (Bearer bc.def.ghi) | 401 | 401 {"detail":"Невалідний або протермінований токен"} |
+| 9 | Підроблений токен | GET /auth/me (Bearer  bc.def.ghi) | 401 | 401 {"detail":"Невалідний або протермінований токен"} |
 | 10 | Refresh замість access | GET /auth/me (Bearer refresh token) | 401 | 401 {"detail":"Потрібен access token"} |
 | 11 | Оновлення токенів | POST /auth/refresh (refresh token) | 200, нова пара токенів | 200 (ротація refresh/access) |
 | 12 | Свої оцінки | GET /students/me/grades (student01) | 200 | 200, grade: 92 (student_id береться з токена) |
@@ -161,19 +166,22 @@ ReDoc: **http://localhost:8000/redoc**
 | 16 | Оцінка поза діапазоном | POST /teachers/grades (grade: 9999) | 422 | 422 (діапазон 0–100) |
 | 17 | Stored XSS у коментарі | POST /teachers/grades (comment зі <script>) | 201, тег вирізано | 201, comment: "alert(document.cookie)Добре" (bleach tags=[], strip=True) |
 | 18 | Security Headers | GET /health | CSP, X-Frame-Options, nosniff, HSTS, Referrer-Policy | ✓ (default-src 'none', X-Frame-Options DENY, nosniff, HSTS, Referrer-Policy, Cache-Control no-store) |
-| 19 | CORS чужий домен | OPTIONS /auth/login (Origin: http://evil.example) | 400, без ccess-control-allow-origin | 400, без ACAO (allow-list доменів) |
+| 19 | CORS чужий домен | OPTIONS /auth/login (Origin: http://evil.example) | 400, без  ccess-control-allow-origin | 400, без ACAO (allow-list доменів) |
 | 20 | Rate Limiting | 6× POST /auth/login (невірний пароль) | 401×5, потім 429 | 401×5, 429 (5 запитів/хв на IP) |
 
 ## STRIDE-таблиця
 
 | Загроза (STRIDE) | Контрзахід у коді | Що можна покращити |
 |---|---|---|
-| **S (Spoofing)** — підробка автентифікації | JWT з підписом HS256 (python-jose, перевірка algorithms=[ALGORITHM]), bcrypt-хешування паролів, перевірка типу токена (ccess vs efresh), однакове повідомлення про невірний логін/пароль (Username Enumeration) | RS256/ES256 з окремим ключем підпису, MFA, rotation ключів |
-| **T (Tampering)** — підробка даних/токенів | Перевірка підпису JWT (erify_token), server-side валідація Pydantic (allow-list, діапазони 0–100), санітизація HTML (bleach) перед збереженням в БД (Stored XSS) | Цифрові підписи критичних операцій, аудит-лог змін |
-| **R (Repudiation)** — заперечення дій | Поле ssigned_by у Grade (FK на User, хто виставив оцінку), ролі в БД, access/refresh токени | Audit trail (who/when/what IP), immutable лог у БД |
+| **S (Spoofing)** — підробка автентифікації | JWT з підписом HS256 (python-jose, перевірка algorithms=[ALGORITHM]), bcrypt-хешування паролів, перевірка типу токена ( ccess vs 
+efresh), однакове повідомлення про невірний логін/пароль (Username Enumeration) | RS256/ES256 з окремим ключем підпису, MFA, rotation ключів |
+| **T (Tampering)** — підробка даних/токенів | Перевірка підпису JWT (
+erify_token), server-side валідація Pydantic (allow-list, діапазони 0–100), санітизація HTML (bleach) перед збереженням в БД (Stored XSS) | Цифрові підписи критичних операцій, аудит-лог змін |
+| **R (Repudiation)** — заперечення дій | Поле  ssigned_by у Grade (FK на User, хто виставив оцінку), ролі в БД, access/refresh токени | Audit trail (who/when/what IP), immutable лог у БД |
 | **I (Information Disclosure)** — витік інформації | UserResponse не повертає password_hash, однакові повідомлення про помилки, CORS allow-list (без *), Security Headers (CSP, no-store), токени не містять паролів | Rate limiting на всі чутливі ендпоінти, маскування логів, HTTPS-only |
 | **D (DoS)** — відмова в обслуговуванні | Rate Limiting (slowapi): /auth/login 5/хв, /auth/register 10/хв за IP, обмеження довжин полів Pydantic | Redis для distributed rate limiting, черги, IP-blocklists |
-| **E (Elevation of Privilege)** — підвищення привілеїв | RBAC у БД (Role → Permissions), equire_role() перевіряє ролі з БД (не з токена) → відкликання ролі діє одразу, принцип мінімальних привілеїв, розділення 401 (не автентифіковано) і 403 (не авторизовано) | ABAC (атрибути), регулярна ревізія прав доступу, токен blacklist при logout |
+| **E (Elevation of Privilege)** — підвищення привілеїв | RBAC у БД (Role → Permissions), 
+equire_role() перевіряє ролі з БД (не з токена) → відкликання ролі діє одразу, принцип мінімальних привілеїв, розділення 401 (не автентифіковано) і 403 (не авторизовано) | ABAC (атрибути), регулярна ревізія прав доступу, токен blacklist при logout |
 
 ## Скриншоти
 
