@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { background: #111; margin: 0; padding: 40px; font-family: Consolas, Monaco, 'Courier New', monospace; }
+    pre { background: #000; color: #ddd; padding: 20px; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); white-space: pre-wrap; }
+    .prompt { color: #4ade80; }
+    .cmd { color: #e5e7eb; }
+    .out { color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <pre><span class="prompt">$</span> <span class="cmd">for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w "%{http_code}\n" -X POST $B/auth/login -H "Content-Type: application/json" -d '{"username":"admin","password":"wrong"}' done</span>
+
+<span class="out">401
+401
+401
+401
+401
+429</span></pre>
+</body>
+</html>
