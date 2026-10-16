@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_redoc_html
+from fastapi.responses import HTMLResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -13,7 +15,14 @@ from app.routes.admin import router as admin_router
 from app.routes.students import router as students_router
 from app.routes.teachers import router as teachers_router
 
-app = FastAPI(title="Електронний деканат", version="1.0.0")
+app = FastAPI(
+    title="Електронний деканат",
+    version="1.0.0",
+    # ReDoc: вбудований шаблон FastAPI вантажить тег "redoc@next" (бета),
+    # який зараз зламаний (помилка import.meta) і показує порожню сторінку.
+    # Вимикаємо його і віддаємо власний /redoc зі стабільною версією redoc@2.0.0.
+    redoc_url=None,
+)
 
 # --- Rate Limiting (slowapi) ---
 app.state.limiter = limiter
@@ -50,3 +59,13 @@ def health():
         "database": "SQLite",
         "tables": len(Base.metadata.tables),
     }
+
+
+@app.get("/redoc", include_in_schema=False, response_class=HTMLResponse)
+def redoc_docs():
+    """ReDoc зі стабільною версією (FastAPI за замовчуванням вантажить зламаний 'redoc@next')."""
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title=f"{app.title} - ReDoc",
+        redoc_js_url="https://cdn.jsdelivr.net/npm/redoc@2.0.0/bundles/redoc.standalone.js",
+    )
