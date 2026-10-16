@@ -18,6 +18,29 @@
 - Токенна автентифікація та авторизація (**JWT access/refresh**)
 - Захист веб-рівня: **Security Headers**, **CORS** (allow-list), **Rate Limiting** (slowapi), **санітизація** проти Stored XSS (bleach)
 
+## Безпека (ЗПР-2)
+
+Практична робота №2 добудувала захист «Електронного деканату» до рівня, придатного для зовнішнього аудиту. **Повний звіт: [SECURITY_AUDIT.md](SECURITY_AUDIT.md)**.
+
+- **Шифрування даних (Field-Level Encryption):** email і phone шифруються Fernet; пошук і перевірка унікальності — через сліпий індекс HMAC-SHA256 (окремий `BLIND_INDEX_KEY`), тому в БД немає відкритих PII (`app/crypto/`).
+- **Зашифровані бекапи:** консистентний знімок через SQLite Online Backup API, шифрування Fernet, перевірене відновлення (`scripts/backup_db.py`, `scripts/restore_db.py`).
+- **Аудит і моніторинг:** журнал `audit_log` за 5W, виявлення Brute Force та off-hours входів, адмін-API `/admin/audit-log` і `/admin/security-stats`.
+- **Hardened-середовище:** multi-stage Dockerfile, non-root `appuser`, `read_only`, `tmpfs`, `cap_drop: ALL`, `no-new-privileges`, `HEALTHCHECK`; HTTPS через Nginx (80 → 301 → 443).
+- **DevSecOps:** сканування Trivy (образ), pip-audit (залежності), Bandit (код) — звіти в `reports/`.
+- **Секрети лише в `.env`** (поза Git); додаток без валідного `JWT_SECRET_KEY` не стартує (fail-fast).
+
+### Автоматична перевірка безпеки
+
+```bash
+./scripts/security_check.sh        # FAIL: 0 → SECURITY CHECK PASSED
+```
+
+### Мінітести на вразливості (12 перевірок)
+
+```bash
+./scripts/pentest_mini.sh           # → reports/pentest_mini.md
+```
+
 ## Технологічний стек
 
 - Python 3.11, FastAPI 0.111.0, Uvicorn 0.29.0
