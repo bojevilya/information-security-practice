@@ -1,0 +1,5 @@
+# Unix-скрипти та Dockerfile завжди з LF — інакше на Windows ламається shebang
+*.sh text eol=lf
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+nginx/*.conf text eol=lf
